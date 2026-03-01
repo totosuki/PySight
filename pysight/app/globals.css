@@ -1,1 +1,7 @@
 @import "tailwindcss";
+
+@theme {
+    --font-code: var(--font-fira-code), ui-monospace, Menlo, Consolas, monospace;
+    --font-heading: var(--font-space-grotesk), ui-sans-serif, sans-serif;
+    --font-sans: var(--font-noto-sans-jp), "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, ui-sans-serif, sans-serif;
+}
