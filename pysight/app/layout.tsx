@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
+import Providers from "@/components/Providers";
 import { firaCode, notoSansJP, spaceGrotesk } from "@/lib/fonts";
 import "./globals.css";
 
@@ -11,12 +12,15 @@ export const metadata: Metadata = {
 function RootLayout({ children }: Readonly<{children: React.ReactNode;}>) {
   return (
     <html
-      lang="en"
+      lang="ja"
       className={`${notoSansJP.variable} ${spaceGrotesk.variable} ${firaCode.variable}`}
+      suppressHydrationWarning
     >
       <body className="bg-(--bg) text-(--fg)">
-        <Navbar />
-        {children}
+        <Providers>
+          <Navbar />
+          {children}
+        </Providers>
       </body>
     </html>
   );
