@@ -60,6 +60,11 @@
     transform: translateX(20px);
 }
 
+/* ========== Mobile TOC Accordion ========== */
+.mobile-toc-details[open] .mobile-toc-chevron {
+    transform: rotate(180deg);
+}
+
 /* ========== Prose (記事・コンテンツ共通) ========== */
 .prose {
     line-height: 1.8;
