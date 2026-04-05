@@ -5,6 +5,7 @@ import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
 import remarkRehype from 'remark-rehype';
+import rehypeShiki from '@shikijs/rehype';
 import rehypeStringify from 'rehype-stringify';
 
 const ARTICLES_DIR = path.join(process.cwd(), 'content/articles');
@@ -58,6 +59,10 @@ export async function getArticleBySlug(slug: string): Promise<Article> {
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkRehype)
+    .use(rehypeShiki, {
+      themes: { dark: 'github-dark-dimmed', light: 'github-light' },
+      defaultColor: false,
+    })
     .use(rehypeStringify)
     .process(content);
 
