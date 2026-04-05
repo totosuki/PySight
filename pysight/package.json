@@ -10,6 +10,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@shikijs/rehype": "^4.0.2",
     "github-slugger": "^2.0.0",
     "gray-matter": "^4.0.3",
     "next": "16.1.6",

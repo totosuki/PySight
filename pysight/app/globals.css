@@ -14,7 +14,7 @@
     --link: #3b82f6;
     --card: #dddddd;
     --card-border: #444444;
-    --code-bg: #1e1e1e;
+    --code-bg: #22272e;
 }
 
 /* ========== ライトモード ========== */
@@ -28,6 +28,7 @@
     --link: #3b82f6;
     --card: #333333;
     --card-border: #d5d5d5;
+    --code-bg: #f6f8fa;
 }
 
 /* ========== テーマトグルボタン ========== */
@@ -57,103 +58,6 @@
 
 .light .theme-toggle::after {
     transform: translateX(20px);
-}
-
-/* ========== Prose (記事・コンテンツ共通) ========== */
-.prose {
-    line-height: 1.8;
-}
-
-.prose h1 {
-    font-size: 1.6rem;
-    font-weight: 700;
-    margin-top: 2.5rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.4rem;
-    border-bottom: 1px solid var(--border);
-}
-
-.prose h1:first-child {
-    margin-top: 0;
-}
-
-.prose p {
-    margin-top: 0;
-    margin-bottom: 1rem;
-}
-
-.prose a {
-    color: var(--link);
-    text-decoration: underline;
-}
-
-.prose a:hover {
-    text-decoration: none;
-}
-
-/* ========== Article Card ========== */
-.article-card {
-    display: flex;
-    align-items: center;
-    padding: 1rem 1.25rem;
-    border: 1px solid var(--card-border);
-    border-radius: 10px;
-    color: var(--card);
-    background: var(--bg);
-    font-weight: 600;
-    -webkit-tap-highlight-color: transparent;
-    transition: background .25s ease, border-color .25s ease, box-shadow .25s ease, transform .15s ease;
-    text-decoration: none;
-}
-
-.article-card::after {
-    content: '';
-    width: .65rem;
-    height: .65rem;
-    margin-left: auto;
-    border-right: 2px solid currentColor;
-    border-bottom: 2px solid currentColor;
-    transform: rotate(-45deg);
-    opacity: .6;
-    transition: transform .2s ease, opacity .2s ease;
-    flex-shrink: 0;
-}
-
-.article-card:hover {
-    transform: translateX(2vw);
-}
-
-.article-card:hover::after {
-    opacity: 1;
-}
-
-.article-card:focus {
-    outline: none;
-}
-
-.article-card:focus-visible {
-    box-shadow: 0 0 0 3px rgba(13, 111, 253, .6);
-}
-
-/* ========== Status Bar ========== */
-.status-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 28px;
-    padding: 0 12px;
-    font-family: var(--font-heading);
-    font-size: .85rem;
-    line-height: 28px;
-    background: var(--bg);
-    color: var(--fg);
-    border-top: 1px solid var(--border);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: center;
-    z-index: 900;
 }
 
 /* ========== Prose (記事・コンテンツ共通) ========== */
@@ -228,7 +132,8 @@
     margin-bottom: 0;
 }
 
-.prose code {
+/* インラインコード */
+.prose :not(pre) > code {
     font-family: var(--font-code);
     font-size: 0.875em;
     background: var(--code-bg);
@@ -236,20 +141,28 @@
     border-radius: 4px;
 }
 
+/* コードブロック (Shiki が <pre><code> を生成) */
 .prose pre {
-    background: var(--code-bg);
     border-radius: 6px;
     padding: 1rem 1.25rem;
     overflow-x: auto;
     margin: 0 0 1.25rem;
     border: 1px solid var(--border);
+    font-size: 0.9rem;
+    line-height: 1.7;
 }
 
-.prose pre code {
-    background: none;
-    padding: 0;
-    font-size: 0.875rem;
-    line-height: 1.7;
+.prose pre,
+.prose pre span {
+    font-family: var(--font-code);
+    color: var(--shiki-dark);
+    background-color: var(--shiki-dark-bg, var(--code-bg));
+}
+
+html.light .prose pre,
+html.light .prose pre span {
+    color: var(--shiki-light);
+    background-color: var(--shiki-light-bg, var(--code-bg));
 }
 
 .prose table {
@@ -279,3 +192,68 @@
 
 .prose strong { font-weight: 700; }
 .prose em { font-style: italic; }
+
+/* ========== Article Card ========== */
+.article-card {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    color: var(--card);
+    background: var(--bg);
+    font-weight: 600;
+    -webkit-tap-highlight-color: transparent;
+    transition: background .25s ease, border-color .25s ease, box-shadow .25s ease, transform .15s ease;
+    text-decoration: none;
+}
+
+.article-card::after {
+    content: '';
+    width: .65rem;
+    height: .65rem;
+    margin-left: auto;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(-45deg);
+    opacity: .6;
+    transition: transform .2s ease, opacity .2s ease;
+    flex-shrink: 0;
+}
+
+.article-card:hover {
+    transform: translateX(2vw);
+}
+
+.article-card:hover::after {
+    opacity: 1;
+}
+
+.article-card:focus {
+    outline: none;
+}
+
+.article-card:focus-visible {
+    box-shadow: 0 0 0 3px rgba(13, 111, 253, .6);
+}
+
+/* ========== Status Bar ========== */
+.status-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 28px;
+    padding: 0 12px;
+    font-family: var(--font-heading);
+    font-size: .85rem;
+    line-height: 28px;
+    background: var(--bg);
+    color: var(--fg);
+    border-top: 1px solid var(--border);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    z-index: 900;
+}

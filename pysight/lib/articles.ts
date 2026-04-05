@@ -5,6 +5,7 @@ import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
 import remarkRehype from 'remark-rehype';
+import rehypeShiki from '@shikijs/rehype';
 import rehypeSlug from 'rehype-slug';
 import rehypeStringify from 'rehype-stringify';
 import { visit } from 'unist-util-visit';
@@ -99,6 +100,10 @@ export async function getArticleBySlug(slug: string): Promise<Article> {
     .use(remarkGfm)
     .use(remarkRehype)
     .use(rehypeSlug)
+    .use(rehypeShiki, {
+      themes: { dark: 'github-dark-dimmed', light: 'github-light' },
+      defaultColor: false,
+    })
     .use(rehypeStringify)
     .process(content);
 
