@@ -14,6 +14,55 @@
     --link: #3b82f6;
     --card: #dddddd;
     --card-border: #444444;
+    --code-bg: #22272e;
+}
+
+/* ========== ライトモード ========== */
+.light {
+    --bg: #ffffff;
+    --fg: #222222;
+    --border: #dddddd;
+    --btn: #222222;
+    --quote-content: #555555;
+    --quote-author: #666666;
+    --link: #3b82f6;
+    --card: #333333;
+    --card-border: #d5d5d5;
+    --code-bg: #f6f8fa;
+}
+
+/* ========== テーマトグルボタン ========== */
+.theme-toggle {
+    width: 46px;
+    height: 26px;
+    border-radius: 13px;
+    border: 1px solid var(--border);
+    background: var(--fg);
+    cursor: pointer;
+    position: relative;
+    transition: background 0.3s ease, border-color 0.3s ease;
+    flex-shrink: 0;
+}
+
+.theme-toggle::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--bg);
+    transition: transform 0.3s ease;
+}
+
+.light .theme-toggle::after {
+    transform: translateX(20px);
+}
+
+/* ========== Mobile TOC Accordion ========== */
+.mobile-toc-details[open] .mobile-toc-chevron {
+    transform: rotate(180deg);
 }
 
 /* ========== Prose (記事・コンテンツ共通) ========== */
@@ -21,18 +70,27 @@
     line-height: 1.8;
 }
 
-.prose h1 {
-    font-size: 1.6rem;
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
     font-weight: 700;
     margin-top: 2.5rem;
     margin-bottom: 1rem;
-    padding-bottom: 0.4rem;
+    padding-bottom: 0.3rem;
     border-bottom: 1px solid var(--border);
 }
 
-.prose h1:first-child {
+.prose h1:first-child,
+.prose h2:first-child,
+.prose h3:first-child {
     margin-top: 0;
 }
+
+.prose h1 { font-size: 1.6rem; }
+.prose h2 { font-size: 1.3rem; }
+.prose h3 { font-size: 1.1rem; border-bottom: none; }
+.prose h4 { font-size: 1rem; border-bottom: none; }
 
 .prose p {
     margin-top: 0;
@@ -46,6 +104,126 @@
 
 .prose a:hover {
     text-decoration: none;
+}
+
+.prose ul,
+.prose ol {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+}
+
+.prose ul { list-style-type: disc; }
+.prose ol { list-style-type: decimal; }
+
+.prose li {
+    margin-bottom: 0.25rem;
+}
+
+.prose li > ul,
+.prose li > ol {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.prose blockquote {
+    margin: 1.25rem 0;
+    padding: 0.5rem 1rem;
+    border-left: 4px solid var(--border);
+    color: var(--quote-content);
+}
+
+.prose blockquote p {
+    margin-bottom: 0;
+}
+
+/* インラインコード */
+.prose :not(pre) > code {
+    font-family: var(--font-code);
+    font-size: 0.875em;
+    background: var(--code-bg);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+}
+
+/* コードブロック (Shiki が <pre><code> を生成) */
+.prose pre {
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    margin: 0 0 1.25rem;
+    border: 1px solid var(--border);
+    font-size: 0.9rem;
+    line-height: 1.7;
+}
+
+.prose pre,
+.prose pre span {
+    font-family: var(--font-code);
+    color: var(--shiki-dark);
+    background-color: var(--shiki-dark-bg, var(--code-bg));
+}
+
+html.light .prose pre,
+html.light .prose pre span {
+    color: var(--shiki-light);
+    background-color: var(--shiki-light-bg, var(--code-bg));
+}
+
+.prose table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.25rem;
+    font-size: 0.9rem;
+}
+
+.prose th,
+.prose td {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border);
+    text-align: left;
+}
+
+.prose th {
+    background: var(--code-bg);
+    font-weight: 700;
+}
+
+.prose hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+}
+
+.prose strong { font-weight: 700; }
+.prose em { font-style: italic; }
+
+/* ========== TOC ========== */
+.toc-link {
+    display: block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 3px;
+    text-decoration: none;
+    color: var(--fg);
+    line-height: 1.5;
+    transition: background 0.15s ease;
+}
+
+.toc-link:hover {
+    background: rgba(128, 128, 128, 0.12);
+}
+
+.toc-depth-2 {
+    font-size: 0.85rem;
+    color: var(--quote-content);
+    padding-left: 1.25rem;
+}
+
+.toc-depth-3,
+.toc-depth-4 {
+    font-size: 0.8rem;
+    color: var(--quote-author);
+    padding-left: 2rem;
 }
 
 /* ========== Article Card ========== */
@@ -82,6 +260,14 @@
 
 .article-card:hover::after {
     opacity: 1;
+}
+
+.article-card:focus {
+    outline: none;
+}
+
+.article-card:focus-visible {
+    box-shadow: 0 0 0 3px rgba(13, 111, 253, .6);
 }
 
 /* ========== Status Bar ========== */

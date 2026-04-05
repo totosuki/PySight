@@ -26,8 +26,8 @@ export const metadata: Metadata = {
 function Articles() {
   return (
     <main className="max-w-[760px] mx-auto px-6 py-10">
-      <h1 className="text-[1.6rem] font-bold mb-2">記事一覧</h1>
-      <p className="text-sm mb-6 text-(--quote-content)">辞書順で表示しています。</p>
+      <h1 className="text-[2rem] font-bold leading-[1.33] mb-[1rem] pb-[0.4rem] border-b border-(--border)">記事一覧</h1>
+      <p className="mb-[1.8em]">辞書順で表示しています。</p>
       <ArticleList />
     </main>
   );

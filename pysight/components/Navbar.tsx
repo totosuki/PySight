@@ -1,8 +1,9 @@
 import { SiGithub } from "react-icons/si";
+import ThemeToggle from "./ThemeToggle";
 
 function Navbar() {
   return (
-    <div className="flex flex-row items-center justify-between h-[75px] p-[24px] border-b-[1px] border-b-(--border)">
+    <div className="sticky top-0 z-50 flex flex-row items-center justify-between h-[75px] p-[24px] border-b-[1px] border-b-(--border) bg-(--bg)">
       <a href="/" className="font-heading font-medium text-[1.8rem]">PySight</a>
       <div className="flex flex-row items-center gap-[1rem]">
         <a href="/articles/">Articles</a>
@@ -10,6 +11,7 @@ function Navbar() {
         <a href="https://github.com/totosuki" target="_blank" aria-label="GitHubを開く" rel="noopener noreferrer">
           <SiGithub size={24} />
         </a>
+        <ThemeToggle />
       </div>
     </div>
   );
