@@ -84,6 +84,14 @@
     opacity: 1;
 }
 
+.article-card:focus {
+    outline: none;
+}
+
+.article-card:focus-visible {
+    box-shadow: 0 0 0 3px rgba(13, 111, 253, .6);
+}
+
 /* ========== Status Bar ========== */
 .status-bar {
     position: fixed;
