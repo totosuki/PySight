@@ -89,3 +89,68 @@
 .prose a:hover {
     text-decoration: none;
 }
+
+/* ========== Article Card ========== */
+.article-card {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    color: var(--card);
+    background: var(--bg);
+    font-weight: 600;
+    -webkit-tap-highlight-color: transparent;
+    transition: background .25s ease, border-color .25s ease, box-shadow .25s ease, transform .15s ease;
+    text-decoration: none;
+}
+
+.article-card::after {
+    content: '';
+    width: .65rem;
+    height: .65rem;
+    margin-left: auto;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(-45deg);
+    opacity: .6;
+    transition: transform .2s ease, opacity .2s ease;
+    flex-shrink: 0;
+}
+
+.article-card:hover {
+    transform: translateX(2vw);
+}
+
+.article-card:hover::after {
+    opacity: 1;
+}
+
+.article-card:focus {
+    outline: none;
+}
+
+.article-card:focus-visible {
+    box-shadow: 0 0 0 3px rgba(13, 111, 253, .6);
+}
+
+/* ========== Status Bar ========== */
+.status-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 28px;
+    padding: 0 12px;
+    font-family: var(--font-heading);
+    font-size: .85rem;
+    line-height: 28px;
+    background: var(--bg);
+    color: var(--fg);
+    border-top: 1px solid var(--border);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    z-index: 900;
+}
