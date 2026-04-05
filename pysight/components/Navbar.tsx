@@ -1,4 +1,5 @@
 import { SiGithub } from "react-icons/si";
+import ThemeToggle from "./ThemeToggle";
 
 function Navbar() {
   return (
@@ -10,6 +11,7 @@ function Navbar() {
         <a href="https://github.com/totosuki" target="_blank" aria-label="GitHubを開く" rel="noopener noreferrer">
           <SiGithub size={24} />
         </a>
+        <ThemeToggle />
       </div>
     </div>
   );
