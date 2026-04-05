@@ -1,153 +1,342 @@
 ---
 title: "reモジュール"
 description: "Pythonのreモジュールについて、関数と例外をまとめました。"
-date: "2024-02-01"
+date: "2024-12-19"
 ---
 
-Python 標準ライブラリの `re` モジュールは、正規表現を使った文字列操作を提供する。
+# reモジュール
 
-# インポート
+文字列に対して、検索や置換、検証などをする方法として正規表現を使用する方法が挙げられる。今回は、Pythonでの正規表現を使うために使用するモジュール`re`について解説をしていこうと思う。
+
+reモジュールを使用するには以下のコードが必要である。
+
 
 ```python
 import re
 ```
 
-# 主な関数
+# 関数
 
-## re.match()
+## re.compile
 
-文字列の**先頭**がパターンに一致するか確認する。
+正規表現オブジェクト`re.Pattern`にコンパイルをする。
+コンパイルすることで、`match`や`search`などを使ってマッチングが出来るようになる。
+だが、後述する`re.match`や`re.search`でもマッチングが出来るため、少ないマッチング回数であれば当関数を使う必要性はない
 
-```python
-m = re.match(r'\d+', '123abc')
-print(m)        # <re.Match object; span=(0, 3), match='123'>
-print(m.group()) # '123'
-
-m2 = re.match(r'\d+', 'abc123')
-print(m2)       # None（先頭が一致しない）
-```
-
-## re.search()
-
-文字列の**どこか**にパターンが一致するか確認する。
 
 ```python
-m = re.search(r'\d+', 'abc123def')
-print(m.group())  # '123'
+pattern = re.compile("吾輩は[猫犬]")
+match = pattern.match("吾輩は犬である。名前はまだ無い。")
+print(f"type(pattern) : {type(pattern)}, type(match) : {type(match)}")
+print(match, end = "\n\n")
+
+# 上の処理と下の処理は同等である
+matcn = re.match(
+  pattern = "吾輩は[猫犬]",
+  string = "吾輩は犬である。名前はまだ無い。"
+)
+print(f"type(match) : {type(match)}")
+print(match)
 ```
 
-`match()` との違いは先頭に限定しない点。
+    type(pattern) : <class 're.Pattern'>, type(match) : <class 're.Match'>
+    <re.Match object; span=(0, 4), match='吾輩は犬'>
+    
+    type(match) : <class 're.Match'>
+    <re.Match object; span=(0, 4), match='吾輩は犬'>
 
-## re.findall()
 
-パターンに一致する**すべての部分文字列**をリストで返す。
+## re.search
+
+この関数は、先ほどまでに紹介した通りである。
+`pettern`がマッチする最初の位置を探して、対応する`re.Match`を返す。
+文字列内でマッチしなければ`None`を返す。
+
 
 ```python
-result = re.findall(r'\d+', 'abc123def456ghi789')
-print(result)  # ['123', '456', '789']
+match = re.search(
+  pattern = "猫",
+  string = "吾輩は猫である。名前はまだ無い。"
+)
+print(type(match))
+print(match)
 ```
 
-## re.finditer()
+    <class 're.Match'>
+    <re.Match object; span=(3, 4), match='猫'>
 
-`findall()` と同様だが、マッチオブジェクトのイテレータを返す。
+
+## re.match
+
+`string`の先頭の文字が`pattern`とマッチする場合のみ`re.Match`を返す。
+それ以外は全て`None`として返す。
+
 
 ```python
-for m in re.finditer(r'\d+', 'abc123def456'):
-    print(m.group(), m.span())
+match = re.match(
+  pattern = "猫",
+  string = "吾輩は猫である。名前はまだ無い。"
+)
+print(match)
+match = re.match(
+  pattern = "吾輩",
+  string = "吾輩は猫である。名前はまだ無い。"
+)
+print(match)
 ```
 
-```
-123 (3, 6)
-456 (9, 12)
-```
+    None
+    <re.Match object; span=(0, 2), match='吾輩'>
 
-## re.sub()
 
-パターンに一致する部分を置換する。
+## re.fullmatch
+
+`string`全体が`pattern`にマッチする場合のみ、`re.Match`を返す。
+それ以外は全て`None`を返す。
+
 
 ```python
-result = re.sub(r'\d+', 'NUM', 'abc123def456')
-print(result)  # 'abcNUMdefNUM'
+match = re.fullmatch(
+  pattern = "猫",
+  string = "吾輩は猫である。名前はまだ無い。"
+)
+print(match)
+match = re.fullmatch(
+  pattern = "吾輩は猫である。名前はまだ無い。",
+  string = "吾輩は猫である。名前はまだ無い。"
+)
+print(match)
 ```
 
-第3引数 `count` で置換回数を制限できる。
+    None
+    <re.Match object; span=(0, 16), match='吾輩は猫である。名前はまだ無い。'>
+
+
+## re.split
+
+`pattern`にマッチする`string`の部分で分割する。
+戻り値はリストで返される。
+
 
 ```python
-result = re.sub(r'\d+', 'NUM', 'abc123def456', count=1)
-print(result)  # 'abcNUMdef456'
+match = re.split(
+  pattern = "l",
+  string = "Hello, World!"
+)
+print(match)
+match = re.split(
+  pattern = " ", # 半角スペース
+  string = "Hello, World!"
+)
+print(match)
 ```
 
-## re.split()
+    ['He', '', 'o, Wor', 'd!']
+    ['Hello,', 'World!']
+    ['Hello, World!']
 
-パターンで文字列を分割する。
+
+## re.findall
+
+`pattern`にマッチする全ての文字列をリストで返す。
+
 
 ```python
-result = re.split(r'[\s,]+', 'one two,three  four')
-print(result)  # ['one', 'two', 'three', 'four']
+match = re.findall(
+  pattern = r"g[a-z]*",
+  string = "Let's go to the baseball game!"
+)
+print(match)
+match = re.findall(
+  pattern = r"猫",
+  string = "Let's go to the baseball game!"
+)
+print(match)
 ```
 
-## re.compile()
+    ['go', 'game']
+    []
 
-パターンを事前にコンパイルして、繰り返し使う場合に効率化できる。
+
+注意点は、正規表現を使わず`pattern`を記述してもあまり意味が無いということだ。（単語の数を数える程度には使えるだろう）
+
 
 ```python
-pattern = re.compile(r'\d+')
-
-print(pattern.findall('abc123def456'))  # ['123', '456']
-print(pattern.sub('NUM', 'abc123'))     # 'abcNUM'
+match = re.findall(
+  pattern = r"base",
+  string = "base base kick kick base kick kick"
+)
+print(match)
+print(len(match))
 ```
 
-# フラグ
+    ['base', 'base', 'base']
+    3
 
-`re.IGNORECASE`（`re.I`）: 大文字小文字を無視
+
+## re.finditer
+
+`pattern`に当てはまる全ての文字列を、順々に表示するイテレータを作成する。
+作成されるイテレータの型は`callable_iterator`。
+因みに、「イテレータとは何か？」については[私の記事](https://totosuki.github.io/iterable-iterator)でも紹介をしている。
+
 
 ```python
-print(re.findall(r'hello', 'Hello HELLO hello', re.I))
-# ['Hello', 'HELLO', 'hello']
+match = re.finditer(
+  pattern = r"t[a-z]*",
+  string = "I want to go to the game too."
+)
+print(type(match))
+for m in match:
+  print(m)
 ```
 
-`re.MULTILINE`（`re.M`）: `^` と `$` が各行の先頭・末尾にマッチ
+    <class 'callable_iterator'>
+    <re.Match object; span=(5, 6), match='t'>
+    <re.Match object; span=(7, 9), match='to'>
+    <re.Match object; span=(13, 15), match='to'>
+    <re.Match object; span=(16, 19), match='the'>
+    <re.Match object; span=(25, 28), match='too'>
+
+
+## re.sub
+
+`pattern`にマッチする`string`の部分を`repl`引数に置き換える。
+`count`に数値を入れることで、置き換える回数を指定することが出来る。
+戻り値は`str`で返される。
+`repl`引数には関数をいれることも可能であり、関数には`re.Match`クラスが渡されるらしい。
+
 
 ```python
-text = "line1\nline2\nline3"
-print(re.findall(r'^\w+', text, re.M))
-# ['line1', 'line2', 'line3']
+match = re.sub(
+  pattern = r"犬",
+  repl = "猫",
+  string = "犬の名前はまだ無い。"
+)
+print(match)
+match = re.sub(
+  pattern = "[a-z]+@",
+  repl = "****@",
+  string = "google@gmail.com, yahoo@co.jp ant exapmle@test.org",
+  count = 2 # 置換回数
+)
+print(match)
 ```
+
+    猫の名前はまだ無い。
+    ****@gmail.com, ****@co.jp ant exapmle@test.org
+
+
+## re.subn
+
+やっていることは、`re.sub`と変わらない。
+ただ、戻り値が`(置換された文字列, 置換した回数)`のタプル型に変わる。
+
+
+```python
+match = re.subn(
+  pattern = r"犬",
+  repl = "猫",
+  string = "犬の名前はまだ無い。"
+)
+print(type(match))
+print(match)
+match = re.subn(
+  pattern = "[a-z]+@",
+  repl = "****@",
+  string = "google@gmail.com, yahoo@co.jp ant exapmle@test.org",
+  count = 2 # 置換回数
+)
+print(type(match))
+print(match)
+```
+
+    <class 'tuple'>
+    ('猫の名前はまだ無い。', 1)
+    <class 'tuple'>
+    ('****@gmail.com, ****@co.jp ant exapmle@test.org', 2)
+
+
+## re.escape
+
+`pattern`に渡した文字列に特殊文字が含まれている場合、エスケープしてくれる関数。
+引数は`pattern`のみで、戻り値は`str`。
+`python3.7`以降は正規表現で特殊な意味を持つ文字のみがエスケープされるようになった。
+
+
+```python
+text = re.escape("https://www.python.org")
+print(type(text))
+print(text)
+text = re.escape("!#$%&'*+-.^_`|~:")
+print(text)
+```
+
+    <class 'str'>
+    https://www\.python\.org
+    !\#\$%\&'\*\+\-\.\^_`\|\~:
+
+
+## re.purge
+
+`re`モジュールのキャッシュをクリアするためのメソッド。
+キャッシュは過去にコンパイルされた正規表現を保持することで速度向上につながるもの。
+内部的には見た感じ、`re._cache`というデータがキャッシュの役割となっており、`dict`で管理されている。
+
+
+```python
+pattern1 = re.compile("猫")
+pattern2 = re.compile("犬")
+pattern3 = re.compile("吾輩は[猫犬]")
+
+print(f"cache size : {len(re._cache)}")
+
+re.purge()
+
+print(f"cache size : {len(re._cache)}")
+```
+
+    cache size : 3
+    cache size : 0
+
+
+実際にcacheのサイズが変わっていることが確認できた。
+具体的な内部仕様を見たい場合は、[この辺り](https://github.com/python/cpython/blob/main/Lib/re/__init__.py)を見ると良い。
 
 # 例外
 
-## re.error
+## re.PatternError
 
-パターンが無効な正規表現の場合に送出される。
+reモジュールに存在する唯一の例外である。
+有効な正規表現ではないものが含まれていた場合に、出力される。
+当たり前ではあるが、マッチしないだけの場合は例外にはならない。
+`python3.12`までは、この例外は`re.error`であった。結構わかりやすくなった！
+
 
 ```python
 try:
-    re.compile(r'[invalid')
+  re.compile("*") # 無効な正規表現
 except re.error as e:
-    print(e)  # unterminated character set at position 0
+  print(e)
+
+raise re.error("エラーが発生しました。")
 ```
 
-# グループ
+    nothing to repeat at position 0
 
-括弧 `()` でグループ化し、`group()` で取得できる。
+    ---------------------------------------------------------------------------
+    error                                     Traceback (most recent call last)
+    Cell In[70], line 6
+          3 except re.error as e:
+          4   print(e)
+    ----> 6 raise re.error("エラーが発生しました。")
 
-```python
-m = re.search(r'(\d{4})-(\d{2})-(\d{2})', '2024-01-15')
-print(m.group(0))  # '2024-01-15'（全体）
-print(m.group(1))  # '2024'
-print(m.group(2))  # '01'
-print(m.group(3))  # '15'
-```
+    error: エラーが発生しました。
 
-名前付きグループ `(?P<name>...)`:
 
-```python
-m = re.search(r'(?P<year>\d{4})-(?P<month>\d{2})', '2024-01')
-print(m.group('year'))   # '2024'
-print(m.group('month'))  # '01'
-```
+上記コードは、`pyton3.11`にて実行しているため、`re.error`を使用している。
 
 # 参考
 
 > 公式ドキュメント
-> https://docs.python.org/ja/3/library/re.html
+> https://docs.python.org/3/library/re.html

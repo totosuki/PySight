@@ -1,128 +1,135 @@
 ---
 title: "存在しないキー取得時の対処法3選"
 description: "Pythonの辞書で存在しないキーを扱う方法を紹介。try-except文、dict.getメソッド、defaultdictの使い方を具体例と共に紹介します。"
-date: "2024-08-01"
+date: "2024-11-12"
 ---
 
-Python の辞書（`dict`）で存在しないキーにアクセスすると `KeyError` が発生する。これを安全に扱う方法を3つ紹介する。
+# 存在しないkeyを取得すると
+
+`dict`型では存在しない`key`を取得しようとするとエラーが起きてしまう。<br>
+まず初めに実際に取得しようとしてみよう。
+
 
 ```python
-d = {'a': 1, 'b': 2}
-print(d['c'])  # KeyError: 'c'
+a = {"a" : 1, "b" : 2}
+print(a["c"])
 ```
 
-# 方法 1：try-except 文
 
-最も汎用的な方法。
+    ---------------------------------------------------------------------------
+    KeyError                                  Traceback (most recent call last)
+    Cell In[4], line 2
+          1 a = {"a" : 1, "b" : 2}
+    ----> 2 print(a["c"])
+
+    KeyError: 'c'
+
+
+`KeyError`例外が出た。今回はこれの対処方法を<b>三つ紹介</b>しようと思う。
+
+# try-except
+
+dict型の存在しない`key`で値を取得する可能性がある際に、対処する方法を二つ紹介する。<br>
+一つ目は、最も一般的な方法である`try-except`文を使用する方法である。
+
+実際に、`try-except`文を使用して存在しない`key`を取得しようとしてみる。
+
 
 ```python
-d = {'a': 1, 'b': 2}
-
+a = {"a" : 1, "b" : 2}
 try:
-    value = d['c']
+    print(a["c"])
 except KeyError:
-    value = None  # デフォルト値
-
-print(value)  # None
+    print("KeyErrorです")
 ```
 
-エラーの種類に関わらず対応できる柔軟さがあるが、コードが冗長になる。
+    KeyErrorです
 
-複数のキーをまとめて処理する場合:
+
+しっかり`try-except`文を使用することで、対処をすることが出来た。
+
+# dict.get()
+
+二つ目の対処方法は、`dict.get`メソッドを使う方法である。<br>
+`dict.get`メソッドを使うことで、`key`が存在しない場合に対処できることが出来る。
+
 
 ```python
-keys = ['a', 'b', 'c', 'd']
-results = {}
-
-for key in keys:
-    try:
-        results[key] = d[key]
-    except KeyError:
-        results[key] = 0
-
-print(results)  # {'a': 1, 'b': 2, 'c': 0, 'd': 0}
+a = {"a" : 1, "b" : 2}
+print(a.get("c"))
 ```
 
-# 方法 2：dict.get()
+    None
 
-`dict.get(key, default)` はキーが存在しない場合にデフォルト値を返す。
+
+存在しない`key`を取得しようとすると、`None`が返された。<br>
+
+また、`dict.get`メソッドの引数には`default`というものがあり、それを指定することで、存在しない`key`を取得しようとした際に返される値を変更することが出来る。<br>
+ちなみに、`default`引数の初期値は`None`のため先程は`None`が返されていた。
+
 
 ```python
-d = {'a': 1, 'b': 2}
-
-print(d.get('a'))        # 1
-print(d.get('c'))        # None（デフォルトは None）
-print(d.get('c', 0))     # 0（デフォルト値を指定）
+a = {"a" : 1, "b" : 2}
+print(a.get("c", -1))
 ```
 
-最もシンプルで読みやすい。デフォルト値が固定の場合に適している。
+    -1
 
-```python
-# カウンターのパターン
-text = "hello world"
-count = {}
 
-for char in text:
-    count[char] = count.get(char, 0) + 1
+`default`引数に`-1`を入れたので、存在しない`key`を取得した際に`-1`が返されていることが確認できた。
 
-print(count)
-```
+# defaultdict
 
-```
-{'h': 1, 'e': 1, 'l': 3, 'o': 2, ' ': 1, 'w': 1, 'r': 1, 'd': 1}
-```
+最後に、そもそも`dict`型を使用しないという解決手段が存在する。<br>
+標準ライブラリにある`collections`には、`defaultdict`というデータ型が存在する。<br>
 
-# 方法 3：collections.defaultdict
-
-`defaultdict` はキーが存在しない場合に自動でデフォルト値を生成する辞書。
 
 ```python
 from collections import defaultdict
-
-# int のデフォルト値は 0
-count = defaultdict(int)
-
-text = "hello world"
-for char in text:
-    count[char] += 1
-
-print(dict(count))
 ```
 
-```
-{'h': 1, 'e': 1, 'l': 3, 'o': 2, ' ': 1, 'w': 1, 'r': 1, 'd': 1}
-```
+`defaultdict`は、インスタンス化の際に初期化を関数ですることが可能である。<br>
+今回は、例として分かりやすくするため無名関数を使用しないが、実際は無名関数を使用したほうが良いと思う。
 
-リストをデフォルト値にする例:
 
 ```python
-from collections import defaultdict
+def func():
+    return "Hello"
 
-graph = defaultdict(list)
-edges = [('a', 'b'), ('a', 'c'), ('b', 'd')]
-
-for src, dst in edges:
-    graph[src].append(dst)
-
-print(dict(graph))
+a = defaultdict(func)
+a["a"] = 1
+a["b"] = 2
+print(a["a"])
+print(a["b"])
+print(a["c"])
 ```
 
-```
-{'a': ['b', 'c'], 'b': ['d']}
+    1
+    2
+    Hello
+
+
+また、当たり前ではあるがint型などデータ型のコンストラクタを利用することも可能である。
+
+
+```python
+a = defaultdict(list)
+a["a"] = [1, 2, 3]
+a["b"].append(4)
+print(a["a"])
+print(a["b"])
+print(a["c"])
 ```
 
-# 使い分け
+    [1, 2, 3]
+    [4]
+    []
 
-| 方法 | 適した場面 |
-|---|---|
-| `try-except` | 複雑なエラーハンドリングが必要な場合 |
-| `dict.get()` | シンプルなデフォルト値が必要な場合 |
-| `defaultdict` | 同じデフォルト値を多くのキーに適用する場合 |
 
 # 参考
 
-> 公式ドキュメント（dict.get）
-> https://docs.python.org/ja/3/library/stdtypes.html#dict.get
+> 公式ドキュメント（defaultdict）
+> https://docs.python.org/ja/3.13/library/collections.html#collections.defaultdict
 
-> 公式ドキュメント（collections.defaultdict）
-> https://docs.python.org/ja/3/library/collections.html#collections.defaultdict
+> Pythonの辞書のgetメソッドでキーから値を取得（存在しないキーでもOK）
+> https://note.nkmk.me/python-dict-get/

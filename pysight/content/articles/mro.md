@@ -1,121 +1,179 @@
 ---
 title: "Classの多重継承とMRO"
 description: "Pythonの多重継承とMRO(Method Resolution Order)について解説。MROの基本ルールやメソッドの呼び出し順序を調べました。"
-date: "2024-03-01"
+date: "2025-04-15"
 ---
 
-Pythonでは、複数のクラスを同時に継承する「多重継承」が可能である。多重継承では、メソッドの探索順序（MRO: Method Resolution Order）が重要になる。
+# Classの多重継承
 
-# 多重継承の基本
+Pythonでは、JavaやC#と違いクラスの多重継承をすることが可能である。
+（JavaやC#もインターフェースの多重継承は可能である）
+
 
 ```python
 class A:
-    def hello(self):
-        print("Hello from A")
+    def introduce(self):
+        print("Class A")
 
 class B(A):
-    pass
+    def introduce(self):
+        print("Class B")
+        super().introduce()
 
 class C(A):
-    def hello(self):
-        print("Hello from C")
+    def introduce(self):
+        print("Class C")
+        super().introduce()
 
-class D(B, C):
-    pass
-
-D().hello()
+class D(B, C): ...
 ```
 
-```
-Hello from C
-```
+上記コードでは、以下のような継承関係があるクラスを作成した。
+- BクラスはAクラスを継承している。
+- CクラスはAクラスを継承している。
+- DクラスはBクラスとCクラスを継承している。
+- 全てのクラスは、暗黙的にobjectクラスを継承している。
 
-`D` は `B` と `C` を継承しているが、`hello()` は `C` から呼ばれた。この順序がMROによって決まる。
+ちなみにobjectクラスというのは、所謂基底クラスというもので特殊メソッドや特殊属性などが全てのクラスで使えるようにするためのものである。<br>
+ではこの状況で、`D().introduce()`を実行してみる。
 
-# MRO の確認方法
-
-クラスの `mro()` メソッドまたは `__mro__` 属性でMROを確認できる。
 
 ```python
-print(D.mro())
-print(D.__mro__)
+D().introduce()
 ```
 
-```
-[<class '__main__.D'>, <class '__main__.B'>, <class '__main__.C'>, <class '__main__.A'>, <class 'object'>]
-(<class '__main__.D'>, <class '__main__.B'>, <class '__main__.C'>, <class '__main__.A'>, <class 'object'>)
-```
+    Class B
+    Class C
+    Class A
 
-# C3線形化アルゴリズム
 
-PythonのMROはC3線形化アルゴリズムによって計算される。このアルゴリズムは以下の原則を保証する。
+B -> C -> Aの順番で`introduce()`が呼ばれていることが分かる。
+ここで、Dクラスの継承してるクラスの順番を変えて再度実行してみる。
 
-1. サブクラスは常に親クラスより先に探索される
-2. 複数の親クラスの順序は継承宣言の順序が保たれる
-3. 一貫性のない継承関係（矛盾するMRO）は `TypeError` を発生させる
-
-# ダイヤモンド継承
-
-最もよく知られる多重継承の問題がダイヤモンド継承である。
 
 ```python
-class Base:
-    def greet(self):
-        print("Base")
+class D(C, B): ...
 
-class Left(Base):
-    def greet(self):
-        print("Left")
-        super().greet()
-
-class Right(Base):
-    def greet(self):
-        print("Right")
-        super().greet()
-
-class Child(Left, Right):
-    def greet(self):
-        print("Child")
-        super().greet()
-
-Child().greet()
-print("MRO:", [c.__name__ for c in Child.mro()])
+d = D()
+d.introduce()
 ```
 
-```
-Child
-Left
-Right
-Base
-MRO: ['Child', 'Left', 'Right', 'Base', 'object']
-```
+    Class C
+    Class B
+    Class A
 
-`super()` がMROに沿って呼び出されることで、`Base.greet()` が一度だけ呼ばれることが保証される。
 
-# TypeError が発生するケース
+`introduce()`が呼ばれるクラスの順番が変わっていることが分かった。<br>
+では、Pythonはどのような順序でクラスの継承の順序を決めているのだろうか？
 
-矛盾するMROを要求する継承は `TypeError` になる。
+# MRO
+
+クラスの継承の順序を決めているのは、「Method Resolution Order」というルールである。Pythonはこの仕組みによって、多重継承された際のメソッド実行順序が決まる。また、Method Resolution Orderは一般的にMROと呼ばれている。
+
+「Method Resolution Order」のルールはPython公式で[定義](https://docs.python.org/3/howto/mro.html)されているが、複雑なため簡潔に三つにまとめてみた。<br>
+- 多重継承の順番を守る
+- 基底クラスをDFSで見つける
+- 共通の基底クラスは後から出てきたものを優先する
+
+となる。
+
+Method Resolution Orderによって、決められた呼び出し順序は`mro`メソッドで確認することが出来る。
+
 
 ```python
-class X: pass
-class Y: pass
-class A(X, Y): pass
-class B(Y, X): pass
-
-class C(A, B): pass  # TypeError!
+# DクラスはD(C, B)で定義した状態である。
+D.mro()
 ```
 
-```
-TypeError: Cannot create a consistent method resolution order (MRO)
-for bases X, Y
+
+
+
+    [__main__.D, __main__.C, __main__.B, __main__.A, object]
+
+
+
+また、この例だけでは「基底クラスの探索は`BFS`なのでは？」と思うかもしれないので、以下の例も試してみる。
+
+
+```python
+class A: ...
+class B(A): ...
+class C(A): ...
+class D(B): ...
+class E(C): ...
+class F(D, E): ...
+
+F.mro()
 ```
 
-`A` では `X → Y` の順序を要求し、`B` では `Y → X` の順序を要求しているため、一貫したMROが作れない。
+
+
+
+    [__main__.F,
+     __main__.D,
+     __main__.B,
+     __main__.E,
+     __main__.C,
+     __main__.A,
+     object]
+
+
+
+しっかり基底クラスがDFSで探されていることが分かる。
+
+クラスを多重継承する際にMethod Resolution Orderのルールで矛盾してしまう場合は、以下のような例外が出力される。
+
+
+```python
+class A: ...
+class B(A): ...
+class C(A): ...
+class D(A, B, C): ...
+
+D.mro()
+```
+
+
+    ---------------------------------------------------------------------------
+    TypeError                                 Traceback (most recent call last)
+    Cell In[8], line 4
+          2 class B(A): ...
+          3 class C(A): ...
+    ----> 4 class D(A, B, C): ...
+          6 D.mro()
+
+    TypeError: Cannot create a consistent method resolution order (MRO) for bases A, B, C
+
+
+BとCの共通の基底クラスであるAは最後に呼ばれなければならないのに対し、クラスDの多重継承ではAが最初に呼ばれる継承順序となっているため、例外が出力されている。
+
+まあでも、そもそもオブジェクト指向的を意識した実装をする場合にはこのような継承例はそもそも生まれないと思うので大丈夫だと思う。<br>
+生まれる場合は、クラス同士の関係性やクラスの機能を見直したほうが良さそう。
+
+余談ではあるが、クラスのMROは特殊属性`__mro__`に格納されていて、値は変更することが不可能である。
+
+
+```python
+class A: ...
+class B(A): ...
+class C(A): ...
+class D(B, C): ...
+
+D.__mro__ = [D, C, B, A]
+```
+
+
+    ---------------------------------------------------------------------------
+    AttributeError                            Traceback (most recent call last)
+    Cell In[63], line 6
+          3 class C(A): ...
+          4 class D(B, C): ...
+    ----> 6 D.__mro__ = [D, C, B, A]
+
+    AttributeError: attribute '__mro__' of 'type' objects is not writable
+
 
 # 参考
 
 > 公式ドキュメント
-> https://docs.python.org/ja/3/library/stdtypes.html#class.__mro__
-
-> The Python 2.3 Method Resolution Order
-> https://www.python.org/download/releases/2.3/mro/
+> https://docs.python.org/3/howto/mro.html
