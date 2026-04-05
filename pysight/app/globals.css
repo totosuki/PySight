@@ -60,6 +60,11 @@
     transform: translateX(20px);
 }
 
+/* ========== Mobile TOC Accordion ========== */
+.mobile-toc-details[open] .mobile-toc-chevron {
+    transform: rotate(180deg);
+}
+
 /* ========== Prose (記事・コンテンツ共通) ========== */
 .prose {
     line-height: 1.8;
@@ -192,6 +197,34 @@ html.light .prose pre span {
 
 .prose strong { font-weight: 700; }
 .prose em { font-style: italic; }
+
+/* ========== TOC ========== */
+.toc-link {
+    display: block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 3px;
+    text-decoration: none;
+    color: var(--fg);
+    line-height: 1.5;
+    transition: background 0.15s ease;
+}
+
+.toc-link:hover {
+    background: rgba(128, 128, 128, 0.12);
+}
+
+.toc-depth-2 {
+    font-size: 0.85rem;
+    color: var(--quote-content);
+    padding-left: 1.25rem;
+}
+
+.toc-depth-3,
+.toc-depth-4 {
+    font-size: 0.8rem;
+    color: var(--quote-author);
+    padding-left: 2rem;
+}
 
 /* ========== Article Card ========== */
 .article-card {
