@@ -1,118 +1,79 @@
 ---
 title: "frozenset型"
 description: "Pythonのfrozenset型を紹介。set型との違いや辞書のキーとしての利用方法を具体例で紹介します。"
-date: "2024-07-01"
+date: "2024-11-11"
 ---
 
-`frozenset` は Python の組み込み型で、**変更不可能な集合（set）** である。`set` 型との違いや活用場面を紹介する。
+# frozenset
 
-# frozenset の基本
+Pythonの集合型は、実は二種類存在する。<br>
+一つ目は言わずとしれた、`set`型である。
 
-```python
-fs = frozenset([1, 2, 3, 2, 1])
-print(fs)
-print(type(fs))
-```
-
-```
-frozenset({1, 2, 3})
-<class 'frozenset'>
-```
-
-重複は除去される点は `set` と同じ。
-
-# set との違い
-
-`frozenset` はイミュータブルなので、要素の追加・削除ができない。
 
 ```python
-s = {1, 2, 3}
-s.add(4)       # OK
-s.remove(1)    # OK
+a = set([2, 5, 1, 2])
+print(type(a))
+print(a)
 
-fs = frozenset([1, 2, 3])
-fs.add(4)      # AttributeError: 'frozenset' object has no attribute 'add'
+# set型はリテラルで作成することもできる
+b = {2, 5, 1, 2}
+print(type(b))
+print(b)
 ```
 
-```
-AttributeError: 'frozenset' object has no attribute 'add'
-```
+    <class 'set'>
+    {1, 2, 5}
+    <class 'set'>
+    {1, 2, 5}
 
-# ハッシュ可能
 
-`frozenset` はイミュータブルなのでハッシュ値を持つ。これにより、辞書のキーや `set` の要素として使用できる。
+そしてもう一つが、今回紹介する`frozenset`型である。<br>
+
 
 ```python
-# dict のキーに使う
-d = {
-    frozenset([1, 2]): "pair",
-    frozenset([3, 4, 5]): "triple",
-}
-print(d[frozenset([1, 2])])
+c = frozenset([2, 5, 1, 2])
+print(type(c))
+print(c)
 ```
 
-```
-pair
-```
+    <class 'frozenset'>
+    frozenset({1, 2, 5})
 
-通常の `set` は辞書のキーにできない。
+
+この`frozenset`型の一番大きな違いは、`set`型と違って変更不可（immutable）な集合型である点。<br>
+ここで、`frozenset`型の`__dir__`を確認してみよう。
+
 
 ```python
-d = {{1, 2}: "pair"}  # TypeError: unhashable type: 'set'
+d = frozenset([2, 5, 1, 2])
+print(*dir(d), sep = ", ")
 ```
 
-# set の要素に frozenset を使う
+    __and__, __class__, __class_getitem__, __contains__, __delattr__, __dir__, __doc__, __eq__, __format__, __ge__, __getattribute__, __getstate__, __gt__, __hash__, __init__, __init_subclass__, __iter__, __le__, __len__, __lt__, __ne__, __new__, __or__, __rand__, __reduce__, __reduce_ex__, __repr__, __ror__, __rsub__, __rxor__, __setattr__, __sizeof__, __str__, __sub__, __subclasshook__, __xor__, copy, difference, intersection, isdisjoint, issubset, issuperset, symmetric_difference, union
+
+
+頑張って探してみると、`__hash__`が実装されていることが分かる。<br>
+つまり...ハッシュ化が出来るということが`frozenset`型の魅力である。
+
+そして、ハッシュ化が出来るということは、`frozenset`型は辞書型の`key`になれるということである！<br>
+辞書型の`key`として`frozenset`型を使ってみる。
+
 
 ```python
-s = {frozenset([1, 2]), frozenset([3, 4]), frozenset([1, 2])}
-print(s)
+e = frozenset([2, 5, 1, 2])
+test_dict = {e : "Hello"} # <- 辞書型のキーに使えている
+print(test_dict)
+print(test_dict[frozenset([2, 5, 1, 2])])
 ```
 
-```
-{frozenset({1, 2}), frozenset({3, 4})}
-```
+    {frozenset({1, 2, 5}): 'Hello'}
+    Hello
 
-重複が除去され、2つの要素になる。
 
-# 集合演算
-
-`frozenset` でも `set` と同様の集合演算が使える。
-
-```python
-a = frozenset([1, 2, 3])
-b = frozenset([2, 3, 4])
-
-print(a | b)   # 和集合
-print(a & b)   # 積集合
-print(a - b)   # 差集合
-print(a ^ b)   # 対称差
-```
-
-```
-frozenset({1, 2, 3, 4})
-frozenset({2, 3})
-frozenset({1})
-frozenset({1, 4})
-```
-
-演算結果も `frozenset` になる。
-
-# 空の frozenset
-
-```python
-empty = frozenset()
-print(empty)
-print(bool(empty))
-```
-
-```
-frozenset()
-False
-```
-
-`frozenset()` は空のfrozensetを作る。`frozenset({})` は辞書として解釈されるので注意。
+辞書型の`key`として使えることが確認できた。
+しかし、これ以外は基本的に`set`型と同じであるためあまり使うケースは少ない...
 
 # 参考
 
 > 公式ドキュメント
-> https://docs.python.org/ja/3/library/stdtypes.html#frozenset
+> https://docs.python.org/ja/3/reference/datamodel.html#set-types

@@ -1,8 +1,10 @@
 ---
 title: "組み込み定数"
 description: "Pythonの組み込み定数について解説。True, False, None, NotImplemented, Ellipsis, __debug__の特徴を具体例で紹介します。"
-date: "2024-09-01"
+date: "2025-08-16"
 ---
+
+# 組み込み定数
 
 「Pythonには定数が無い」と思われがちだが、実はいくつかの定数が存在する。
 今回は、Built-in の名前空間の中にある組み込み定数を全て紹介してみる。
@@ -78,6 +80,7 @@ class B:
     def __eq__(self, obj):
         print("exec B.__eq__")
         return NotImplemented
+
 ```
 
 `__eq__` は二項演算 `==` の特殊メソッドなので、それらを使用して確認してみる。
@@ -117,7 +120,7 @@ True
 class MyInt:
     def __init__(self, num):
         self.num = num
-
+    
     def __eq__(self, obj):
         if isinstance(obj, MyInt):
             return self.num == obj.num
@@ -134,6 +137,7 @@ print("--- MyInt(5) == int(5) ---")
 print(MyInt(5) == int(5))
 print("--- int(5) == MyInt(5) ---")
 print(int(5) == MyInt(5))
+
 ```
 
 ```
@@ -192,8 +196,9 @@ True
 
 `__debug__` は Python を実行する際のオプションによって値が変わる定数である。
 
-- 通常の実行：`True` になる
-- `-O` `-OO` オプション付きで実行：`False` になる
+-   通常の実行：`True` になる
+-   `-O` `-OO` オプション付きで実行：`False` になる
+
 
 ```bash
 # 通常の実行
@@ -207,9 +212,9 @@ False
 
 `-O` オプションは「基本的な最適化」を行うオプションで、主に以下の処理を行う。
 
-- `__debug__` を `False` に設定
-- `assert` 文を除去
-- `if __debug__:` ブロック内コードを除去
+-   `__debug__` を `False` に設定
+-   `assert` 文を除去
+-   `if __debug__:` ブロック内コードを除去
 
 ```python
 if __debug__:
@@ -231,16 +236,16 @@ assert 1 != 1, "1 must not be 1"
 
 つまり、Python における「真の定数」は以下の 4 つだけである。
 
-- `None`
-- `False`
-- `True`
-- `__debug__`
+-   `None`
+-   `False`
+-   `True`
+-   `__debug__`
 
 `NotImplemented` や `Ellipsis` は、値としては定数的な性質を持つが、名前自体は再代入可能なため「真の定数」ではない。
 
 # 参考
 
-> 公式ドキュメント
+> 公式ドキュメント  
 > https://docs.python.org/ja/3/library/constants.html
 
 > Real Python

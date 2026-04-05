@@ -1,135 +1,69 @@
 ---
 title: "__doc__について"
 description: "Pythonの特殊属性__doc__の基本と使い方を紹介。docstringを利用したカスタマイズ方法や記述スタイルのポイントも紹介します。"
-date: "2024-01-01"
+date: "2024-11-10"
 ---
 
-標準ライブラリや外部ライブラリなどで、関数やクラスの使用法が分からなくなった時の選択肢の一つ。
+# \_\_doc\_\_
 
-`__doc__` という特殊属性を使用することで、関数やクラスなどの使用法が分かる場合がある。
+標準ライブラリや外部ライブラリなどで、関数やクラスの使用法が分からなくなった時の選択肢の一つ。<br>
+`__doc__`という特殊属性を使用することで、関数やクラスなどの使用法が分かる場合がある。
+
 
 ```python
 a = int(5)
 print(a.__doc__)
 ```
 
-```
-int([x]) -> integer
-int(x, base=10) -> integer
+    int([x]) -> integer
+    int(x, base=10) -> integer
+    
+    Convert a number or string to an integer, or return 0 if no arguments
+    are given.  If x is a number, return x.__int__().  For floating-point
+    numbers, this truncates towards zero.
+    
+    If x is not a number or if base is given, then x must be a string,
+    bytes, or bytearray instance representing an integer literal in the
+    given base.  The literal can be preceded by '+' or '-' and be surrounded
+    by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.
+    Base 0 means to interpret the base from the string as an integer literal.
+    >>> int('0b100', base=0)
+    4
 
-Convert a number or string to an integer, or return 0 if no arguments
-are given.  If x is a number, return x.__int__().  For floating-point
-numbers, this truncates towards zero.
-...
-```
 
-# __doc__ とは
+Linuxコマンドの`man`にとても似ている。<br>
+でも、結構簡単に使えるから気持ちとしては`help`オプションぐらいの気持ちで気軽に使ってみよう！
 
-`__doc__` は関数・クラス・モジュールが持つ特殊属性で、その定義の直下に書かれた文字列リテラル（docstring）を格納している。
+# docstrings
 
-```python
-def greet(name: str) -> str:
-    """指定した名前に挨拶する。"""
-    return f"Hello, {name}!"
-
-print(greet.__doc__)
-```
-
-```
-指定した名前に挨拶する。
-```
-
-# docstring の書き方
-
-PEP 257 では、docstring の記述スタイルとして以下が推奨されている。
-
-## 一行 docstring
+また、自作の関数やクラスで`__doc__`を使えるようにするには`docstring`という方法を使う。
 
 ```python
-def add(a, b):
-    """2つの数を足して返す。"""
-    return a + b
+class MyClass:
+    """This is a class!!"""
+
+def func():
+    """This is a function!!"""
+
+print(func.__doc__)
+print(MyClass.__doc__)
 ```
 
-## 複数行 docstring
+    This is a function!!
+    This is a class!!
 
-```python
-def divide(a, b):
-    """
-    2つの数を割り算する。
 
-    Args:
-        a: 被除数
-        b: 除数（0 以外）
+上記の例では、適当に`docstrings`を記載しているが、しっかり書きたいなら一般的に使われているスタイルに沿って記述すると尚良し。<br>
+代表的なスタイルとして挙げられるのは
+- reStructuredTextスタイル
+- Googleスタイル
+- NumPyスタイル
 
-    Returns:
-        a / b の結果
+などがあるけど、とりあえず[PEP257](https://peps.python.org/pep-0257/)のルールは守ると統一的にはなる。
 
-    Raises:
-        ZeroDivisionError: b が 0 の場合
-    """
-    return a / b
-```
+そもそも`docstrings`を書いている時点で十分偉いけどね。
 
-# クラスへの適用
+# 参考文献
 
-クラスにも同様に docstring を付けることができる。
-
-```python
-class Circle:
-    """円を表すクラス。"""
-
-    def __init__(self, radius: float):
-        """
-        Args:
-            radius: 円の半径
-        """
-        self.radius = radius
-
-print(Circle.__doc__)
-print(Circle.__init__.__doc__)
-```
-
-```
-円を表すクラス。
-
-        Args:
-            radius: 円の半径
-        
-```
-
-# __doc__ のカスタマイズ
-
-`__doc__` は属性なので、直接書き換えることもできる。
-
-```python
-def my_func():
-    pass
-
-my_func.__doc__ = "動的に設定した docstring"
-print(my_func.__doc__)
-```
-
-```
-動的に設定した docstring
-```
-
-ただし、通常の開発では直接書き換えることは少なく、デコレータなどで自動生成する場合に使われる。
-
-# help() との関係
-
-組み込み関数 `help()` は内部で `__doc__` を参照して情報を表示する。
-
-```python
-help(int)
-```
-
-`__doc__` が `None` の場合、`help()` は "No documentation available." と表示する。
-
-# 参考
-
-> 公式ドキュメント
-> https://docs.python.org/ja/3/reference/datamodel.html#index-55
-
-> PEP 257 – Docstring Conventions
-> https://peps.python.org/pep-0257/
+> [Python] docstringのスタイルと書き方
+> https://qiita.com/flcn-x/items/393c6f1f1e1e5abec906

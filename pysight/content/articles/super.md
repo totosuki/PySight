@@ -1,15 +1,15 @@
 ---
 title: "super()の仕組み"
 description: "Pythonのsuper()について、基本的な使い方からMROとの関係、引数の動作原理まで実例付きで解説します。"
-date: "2024-10-01"
+date: "2025-08-19"
 ---
 
+# super()
 今回は、Pythonのクラスでよく使われる `super()` について紹介する。
 
 `super()` は一見単純に見えるが、実際には多重継承やMRO（Method Resolution Order）と密接に関わる複雑な仕組みを持っている。また、`super` は公式ドキュメントでは組み込み関数として[挙げられている](https://docs.python.org/ja/3.13/library/functions.html)が、実際にはクラスである。
 
 # 基本的な使い方
-
 `super()` の基本的な機能は、継承関係にあるクラスで親クラスのメソッドを呼び出すことである。
 
 ```python
@@ -29,7 +29,6 @@ class Japanese(English):
 
 Japanese().print_hello()
 ```
-
 ```
 こんにちは
 hello
@@ -69,8 +68,7 @@ print(cat.name, cat.animal_type, cat.cat_type)
 ```
 
 # MROを考慮した動作
-
-`super()` が持つ他の機能として、MRO（Method Resolution Order）を考慮したメソッドアクセスが挙げられる。MROについて詳しくは、[Classの多重継承とMROの記事](/articles/mro/)で解説しているが、簡単に言うとPythonが多重継承時にメソッドを探す順序のことである。
+`super()` が持つ他の機能として、MRO（Method Resolution Order）を考慮したメソッドアクセスが挙げられる。MROについて詳しくは、[Classの多重継承とMROの記事](https://claude.ai/articles/mro/)で解説しているが、簡単に言うとPythonが多重継承時にメソッドを探す順序のことである。
 
 では実際に、多重継承で `super()` がどのように動作するか確認してみる。
 
@@ -102,7 +100,7 @@ Class A
 MRO: ['D', 'B', 'C', 'A', 'object']
 ```
 
-これをよーく見てみると、Bクラスで `super()` が呼ばれているのにも関わらず、次にCクラスが呼ばれている。このことから、`super()` はただ単に親クラスを呼び出す訳ではなく、**MROによって次に呼び出すクラスが決まっている**ことが分かる。
+これをよーく見てみると、Bクラスで `super()` が呼ばれているのにも関わらず、次にCクラスが呼ばれている。このことから、`super()` はただ単に親クラスを呼び出す訳ではなく、<b>MROによって次に呼び出すクラスが決まっている</b>ことが分かる。
 
 # super()の省略形
 
@@ -137,7 +135,6 @@ Class A
 ```
 
 # super()の引数
-
 次に、`super()` の引数について詳しく見てみる。
 以下のような複雑な継承構造を作成して実験してみよう。
 
@@ -240,5 +237,5 @@ Class A
 
 # 参考
 
-> 公式ドキュメント
+> 公式ドキュメント  
 > https://docs.python.org/3/library/functions.html#super
